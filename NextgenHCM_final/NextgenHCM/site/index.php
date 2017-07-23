@@ -1,3 +1,33 @@
+<?php
+   include("config.php");
+   session_start();
+
+   if($_SERVER["REQUEST_METHOD"] == "POST") {
+      // username and password sent from form
+
+      $myusername = mysqli_real_escape_string($db,$_POST['username']);
+      $mypassword = mysqli_real_escape_string($db,$_POST['password']);
+
+      $sql = "SELECT id FROM admin WHERE username = '$myusername' and passcode = '$mypassword'";
+      $result = mysqli_query($db,$sql);
+      $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+      $active = $row['active'];
+
+      $count = mysqli_num_rows($result);
+
+      // If result matched $myusername and $mypassword, table row must be 1 row
+
+      if($count == 1) {
+         session_register("myusername");
+         $_SESSION['login_user'] = $myusername;
+
+         header("location: welcome.php");
+      }else {
+         $error = "Your Login Name or Password is invalid";
+      }
+   }
+?>
+
 <!doctype html>
 <html>
 <head>
@@ -43,7 +73,7 @@
                                   </button>
                                   <a class="navbar-brand visible-xs" href="#"><img src="images/logo.png" alt="logo"></a>
                                 </div>
-                            
+
                                 <!-- Collect the nav links, forms, and other content for toggling -->
                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                                   <ul class="nav navbar-nav">
@@ -53,8 +83,8 @@
                                     <li><a href="#">Who we are?</a></li>
                                      <li><a href="#">Contact Us</a></li>
                                   </ul>
-                                  <button type="button" class="btn btn-danger pull-right hidden-xs"><span class="fa fa-sign-in"></span>Login</button>
-                                  
+                                  <button type="button" class="btn btn-danger pull-right hidden-xs" data-toggle="modal" data-target="#myModal"><span class="fa fa-sign-in"></span>Login</button>
+
                                 </div><!-- /.navbar-collapse -->
                               </div><!-- /.container-fluid -->
 							</nav>
@@ -64,6 +94,26 @@
             </div>
         </div>
     </header>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Login</h4>
+          </div>
+          <div class="modal-body">
+            <form action = "" method = "post">
+                  <label>UserName  :</label><input type = "text" name = "username" class = "box"/><br /><br />
+                  <label>Password  :</label><input type = "password" name = "password" class = "box" /><br/><br />
+                  <input type = "submit" value = " Submit "/><br />
+               </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="slider">
     	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
   <!-- Indicators -->
@@ -72,7 +122,7 @@
             <li data-target="#carousel-example-generic" data-slide-to="1"></li>
             <li data-target="#carousel-example-generic" data-slide-to="2"></li>
           </ol>
-        
+
           <!-- Wrapper for slides -->
           <div class="carousel-inner" role="listbox">
             <div class="item active">
@@ -80,7 +130,7 @@
               <div class="carousel-caption">
                 <h1>Next Gen <span>HCM</span></h1>
                 <h1>30-Day Trial</h1>
-                <p>Experience every module completely                       
+                <p>Experience every module completely
 </p>
 					<button type="button" class="btn btn-warning pull-left">Signup Now !</button>
               </div>
@@ -88,12 +138,12 @@
             <div class="item">
               <img src="images/slide_2.jpg" alt="...">
               <div class="carousel-caption">
-               
+
               </div>
             </div>
-            
+
           </div>
-        
+
           <!-- Controls -->
            <!--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
             <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -170,9 +220,9 @@
                         aspects that are vital <br>
                         for your business.
                     </p>
-                        
-                        
-                    	
+
+
+
                     </div>
                 </div>
             </div>
@@ -199,9 +249,9 @@
         	<div class="row">
             <h1 class="text-center">try it</h1>
             <article id="demo-default" class="demo">
-            
+
             	<div id="coverflow">
-                
+
         <ul class="flip-items">
             <li data-flip-title="Red">
                 <img src="images/1_@.jpg">
@@ -240,19 +290,19 @@
         </div>
     </div>
     <div class="testimonial">
-    	
+
             		<div class="carousel-reviews broun-block">
     <div class="container">
         <div class="row">
         <h1 class="text-center">THE BUZZ AROUND...</h1>
             <div id="carousel-reviews" class="carousel slide" data-ride="carousel">
-            
+
                 <div class="carousel-inner">
                     <div class="item active">
                 	    <div class="col-md-6 col-sm-6">
         				    <div class="block-text rel zmin">
-						        
-							    
+
+
 						        <p>Never before has there been a good film portrayal of ancient Greece's favourite myth. So why would Hollywood start now? This latest attempt at bringing the son of Zeus to the big screen is brought to us by X-Men: The last Stand director Brett Ratner. If the name of the director wasn't enough to dissuade ...</p>
 							    <ins class="ab zmin sprite sprite-i-triangle block"></ins>
 					        </div>
@@ -264,8 +314,8 @@
 						</div>
             			<div class="col-md-6 col-sm-6 hidden-xs">
 						    <div class="block-text rel zmin">
-						        
-							    
+
+
         						<p>The 2013 movie "The Purge" left a bad taste in all of our mouths as nothing more than a pseudo-slasher with a hamfisted plot, poor pacing, and a desperate attempt at "horror." Upon seeing the first trailer for "The Purge: Anarchy," my first and most immediate thought was "we really don't need another one of these."  </p>
 					            <ins class="ab zmin sprite sprite-i-triangle block"></ins>
 				            </div>
@@ -275,12 +325,12 @@
 								<i>United States</i>
 							</div>
 						</div>
-						
+
                     </div>
                     <div class="item">
                         <div class="col-md-6 col-sm-6">
         				    <div class="block-text rel zmin">
-						       							    
+
 						        <p>Never before has there been a good film portrayal of ancient Greece's favourite myth. So why would Hollywood start now? This latest attempt at bringing the son of Zeus to the big screen is brought to us by X-Men: The last Stand director Brett Ratner. If the name of the director wasn't enough to dissuade ...</p>
 							    <ins class="ab zmin sprite sprite-i-triangle block"></ins>
 					        </div>
@@ -292,8 +342,8 @@
 						</div>
             			<div class="col-md-6 col-sm-6 hidden-xs">
 						    <div class="block-text rel zmin">
-						        
-							    
+
+
         						<p>The 2013 movie "The Purge" left a bad taste in all of our mouths as nothing more than a pseudo-slasher with a hamfisted plot, poor pacing, and a desperate attempt at "horror." Upon seeing the first trailer for "The Purge: Anarchy," my first and most immediate thought was "we really don't need another one of these."  </p>
 					            <ins class="ab zmin sprite sprite-i-triangle block"></ins>
 				            </div>
@@ -303,9 +353,9 @@
 								<i>United States</i>
 							</div>
 						</div>
-						
+
                     </div>
-                                        
+
                 </div>
                 <a class="left carousel-control" href="#carousel-reviews" role="button" data-slide="prev">
                     <span class="fa fa-angle-left"></span>
@@ -317,7 +367,7 @@
         </div>
     </div>
 </div>
-            
+
     </div>
     <div class="thebest">
     	<div class="container">
@@ -359,20 +409,20 @@
                 	<div class="form_cont">
                     	<form class="form-horizontal">
                               <div class="form-group form-group-lg">
-                                
+
                                 <div class="col-sm-10">
                                   <input class="form-control" type="text" id="formGroupInputLarge" placeholder="Full Name*">
                                 </div>
                               </div>
                               <div class="form-group form-group-lg">
-                               
+
                                 <div class="col-sm-10">
                                   <input class="form-control" type="text" id="formGroupInputSmall" placeholder="Phone*">
                                 </div>
                               </div>
-                              
+
                               <div class="form-group form-group-lg">
-                               
+
                                 <div class="col-sm-10">
                                   <select class="form-control">
                                       <option>Select a Country*</option>
@@ -384,7 +434,7 @@
                                 </div>
                               </div>
                               <div class="form-group form-group-lg">
-                               
+
                                 <div class="col-sm-10">
                                   <input class="form-control" type="text" id="formGroupInputSmall" placeholder="How can wb help you?*">
                                 </div>
@@ -396,20 +446,20 @@
                 	<div class="form_cont">
                     	<form class="form-horizontal">
                               <div class="form-group form-group-lg">
-                                
+
                                 <div class="col-sm-10">
                                   <input class="form-control" type="text" id="formGroupInputLarge" placeholder="Business E-mail Address*">
                                 </div>
                               </div>
                               <div class="form-group form-group-lg">
-                               
+
                                 <div class="col-sm-10">
                                   <input class="form-control" type="text" id="formGroupInputSmall" placeholder="Company Name*">
                                 </div>
                               </div>
-                              
+
                               <div class="form-group form-group-lg">
-                               
+
                                 <div class="col-sm-10">
                                   <select class="form-control">
                                       <option>Area of Interest*</option>
@@ -421,7 +471,7 @@
                                 </div>
                               </div>
                               <div class="form-group form-group-lg">
-                               
+
                                 <div class="col-sm-5">
                                   <img src="images/image.jpg"  class="code" alt="code">
                                 </div>
@@ -470,25 +520,25 @@
         <h2 class="text-center">Sign up Now!</h2>
         <div id="fpi_title" class="rotate fpi_title"><h2>SIGN UP</h2></div>
         		<form class="fix">
-                
+
                       <div class="form-group">
-                        
+
                         <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Full Name">
                       </div>
                       <div class="form-group">
-                        
+
                         <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                       </div>
                        <div class="form-group">
-                        
+
                         <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
                       </div>
                       <div class="form-group">
-                        
+
                         <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                       </div>
                        <div class="form-group">
-                        
+
                         <select class="form-control">
                           <option>1</option>
                           <option>2</option>
@@ -498,7 +548,7 @@
                         </select>
                       </div>
                       <div class="form-group">
-                        
+
                         <select class="form-control">
                               <option>1</option>
                               <option>2</option>
@@ -508,7 +558,7 @@
                             </select>
                       </div>
                        <div class="form-group">
-                        
+
                         <select class="form-control">
                               <option>1</option>
                               <option>2</option>
@@ -546,7 +596,7 @@ $(window).scroll(function(){
 $(document).ready(function() {
     $("#fpi_title").click(function(){
 		$(".signup").toggleClass("show");
-		
+
 });
 });
 </script>
